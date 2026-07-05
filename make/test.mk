@@ -11,7 +11,7 @@ unit-test:
 	if [ -n "$$pkgs" ]; then \
 		go test -race -count=1 \
 		-covermode=atomic \
-		-coverprofile=../tmp/coverage_unit.out \
+		-coverprofile=tmp/coverage_unit.out \
 		$$pkgs; \
 	else \
 		echo "no packages to test"; \
