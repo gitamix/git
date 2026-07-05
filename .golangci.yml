@@ -10,14 +10,18 @@ linters:
     - govet
     - staticcheck
     - unused
-    - ineffassign
     - errcheck
     - revive
     - misspell
-    - unconvert
     - unparam
     - gocyclo
     - paralleltest
+    - godoclint
+    - godot
+    - godox
+    - dogsled
+    - bodyclose
+    - testpackage
   settings:
     gocyclo:
       min-complexity: 15
