@@ -17,14 +17,15 @@ fi
 # Filter out main packages and calculate coverage percentage.
 filtered_file="${coverage_file}.filtered"
 head -n1 "${coverage_file}" > "${filtered_file}"
-grep -v '/cmd/' "${coverage_file}" | tail -n +2 >> "${filtered_file}"
+grep -v '/cmd/' "${coverage_file}" | grep -v '/internal/test/' | tail -n +2 >> "${filtered_file}"
 
-percent=$(go tool cover -func="../${filtered_file}" 2>/dev/null \
+percent=$(go tool cover -func="${filtered_file}" 2>/dev/null \
 	| tail -n1 \
 	| awk '{print $NF}')
 
 rm -f "${filtered_file}"
 
-percent_no_pct=${percent%\%}
+# Remove the % sign from the end of percent
+percent_no_pct="${percent%\%}"
 printf '%s' "$percent_no_pct" > "$output_file"
 echo "${label}: $percent"
