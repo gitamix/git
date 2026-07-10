@@ -16,6 +16,9 @@ jobs:
       - name: Run unit tests
         run: |
           make unit-test
+      - name: Show Docker info
+        run: |
+          docker info
       - name: Run integration tests
         run: |
           make integration-test
