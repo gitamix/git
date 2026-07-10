@@ -33,3 +33,9 @@ go.work.sum
 .idea/
 .vscode/
 .obsidian/
+
+# AI agent temporary files
+.gigacode/plans/
+.gigacode/reports/
+.gigacode/*.log
+.gigacode/tmp/
