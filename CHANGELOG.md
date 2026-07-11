@@ -9,12 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Go module configuration for the project.
-- Base project template files, including `Makefile` and `golangci-lint` configuration.
-- `errs` package with shared domain errors for empty commit hashes and failed git execution.
-- `client/git` package with a Git client and `CommitMessage` retrieval by commit hash.
-- Test fixtures and fake shell execution coverage for the Git client.
+- Go module configuration for the project
+- Base project template files, including `Makefile` and `golangci-lint` configuration
+- `errs` package with shared domain errors for empty commit hashes and failed git execution
+- `client/git` package with a Git client and `CommitMessage` retrieval by commit hash
+- Test fixtures and fake shell execution coverage for the Git client
 - Integration tests run with a Docker container via testcontainers
+- Implemented `CommitsFrom()` to retrieve commits that come from the provided commit hash
 
 ### Fixed
 
