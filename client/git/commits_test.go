@@ -138,7 +138,7 @@ func TestClient_CommitsFrom(t *testing.T) {
 			},
 			want: want{
 				commits: nil,
-				err:     fake.Err,
+				err:     errs.ErrGitFailed,
 			},
 		},
 		{
