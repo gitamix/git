@@ -12,8 +12,8 @@ import (
 	"github.com/gitamix/git/errs"
 )
 
-// Commits retrieves a list of commits
-// from the specified hash to the current HEAD.
+// Commits retrieves a list of commits reachable from the current HEAD
+// that are not reachable from the specified hash (i.e. commits after `hash`, exclusive).
 //
 // Returns error if the hash is empty
 // or if the git command execution fails

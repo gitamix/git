@@ -25,7 +25,7 @@ func NewCommitMessageCmdFixture(
 // NewCommitsCmdFixture creates a new command fixture
 // for retrieving commits by the specified commit hash.
 //
-// Used in tests to simulate the behavior of the git log command.
+// Used in tests to simulate the behavior of the git rev-list command.
 func NewCommitsCmdFixture(
 	hash commit.Hash,
 ) command.Command {
