@@ -12,13 +12,13 @@ import (
 	"github.com/gitamix/git/errs"
 )
 
-// CommitsFrom retrieves a list of commits
+// Commits retrieves a list of commits
 // from the specified hash to the current HEAD.
 //
 // Returns error if the hash is empty
 // or if the git command execution fails
 // or if the context is canceled.
-func (c *Client) CommitsFrom(
+func (c *Client) Commits(
 	ctx context.Context,
 	hash commit.Hash,
 ) ([]commit.Commit, error) {

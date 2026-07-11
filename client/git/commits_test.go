@@ -15,7 +15,7 @@ import (
 	shellfk "github.com/gitamix/git/internal/test/fake/shell"
 )
 
-func TestClient_CommitsFrom(t *testing.T) {
+func TestClient_Commits(t *testing.T) {
 	t.Parallel()
 	type args struct {
 		ctx  context.Context
@@ -36,7 +36,7 @@ func TestClient_CommitsFrom(t *testing.T) {
 			c: impl.NewClient(
 				shellfk.NewShell(
 					shellfk.WithResponse(
-						NewCommitsFromCmdFixture(
+						NewCommitsCmdFixture(
 							commit.NewHash("1234567"),
 						),
 						execution.NewExecution(
@@ -122,7 +122,7 @@ func TestClient_CommitsFrom(t *testing.T) {
 			c: impl.NewClient(
 				shellfk.NewShell(
 					shellfk.WithResponse(
-						NewCommitsFromCmdFixture(
+						NewCommitsCmdFixture(
 							commit.NewHash("1234567"),
 						),
 						execution.NewExecution(
@@ -146,7 +146,7 @@ func TestClient_CommitsFrom(t *testing.T) {
 			c: impl.NewClient(
 				shellfk.NewShell(
 					shellfk.WithResponse(
-						NewCommitsFromCmdFixture(
+						NewCommitsCmdFixture(
 							commit.NewHash("1234567"),
 						),
 						execution.NewExecution(
@@ -195,7 +195,7 @@ func TestClient_CommitsFrom(t *testing.T) {
 			c: impl.NewClient(
 				shellfk.NewShell(
 					shellfk.WithResponse(
-						NewCommitsFromCmdFixture(
+						NewCommitsCmdFixture(
 							commit.NewHash("1234567"),
 						),
 						execution.NewExecution(
@@ -241,7 +241,7 @@ func TestClient_CommitsFrom(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			got, err := tt.c.CommitsFrom(
+			got, err := tt.c.Commits(
 				tt.args.ctx,
 				tt.args.hash,
 			)

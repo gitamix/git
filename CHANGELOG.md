@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `client/git` package with a Git client and `CommitMessage` retrieval by commit hash
 - Test fixtures and fake shell execution coverage for the Git client
 - Integration tests run with a Docker container via testcontainers
-- Implemented `CommitsFrom()` to retrieve commits that come from the provided commit hash
+- Implemented `Commits()` to retrieve commits that come from the provided commit hash
 
 ### Fixed
 

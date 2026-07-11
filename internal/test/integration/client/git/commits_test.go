@@ -15,12 +15,12 @@ import (
 	shfx "github.com/gitamix/git/internal/test/fixture/shell"
 )
 
-// TestClient_CommitsFrom tests the CommitsFrom method of the Git client.
+// TestClient_Commits tests the Commits method of the Git client.
 //
 // It verifies that the method correctly retrieves commits
 // from the specified hash to HEAD and returns appropriate errors
 // for invalid inputs.
-func TestClient_CommitsFrom(t *testing.T) {
+func TestClient_Commits(t *testing.T) {
 	t.Parallel()
 	t.Run("main first parent commit", func(t *testing.T) {
 		t.Parallel()
@@ -33,7 +33,7 @@ func TestClient_CommitsFrom(t *testing.T) {
 					RepoDir,
 				),
 			).
-			CommitsFrom(
+			Commits(
 				ctx,
 				commit.NewHash(
 					fx.
@@ -56,7 +56,7 @@ func TestClient_CommitsFrom(t *testing.T) {
 					RepoDir,
 				),
 			).
-			CommitsFrom(
+			Commits(
 				ctx,
 				commit.NewHash("thishashdoesnotexist"),
 			)
@@ -75,7 +75,7 @@ func TestClient_CommitsFrom(t *testing.T) {
 					RepoDir,
 				),
 			).
-			CommitsFrom(
+			Commits(
 				ctx,
 				commit.NewHash(""),
 			)
