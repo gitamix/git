@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Test fixtures and fake shell execution coverage for the Git client
 - Integration tests run with a Docker container via testcontainers
 - Implemented `Commits()` to retrieve commits that come from the provided commit hash
+- Added `AGENTS.md` documentation for AI assistants workflow integration
 
 ### Fixed
 
