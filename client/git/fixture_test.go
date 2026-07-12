@@ -36,3 +36,16 @@ func NewCommitsCmdFixture(
 		hash.String()+"..HEAD",
 	)
 }
+
+// NewCurrentBranchCmdFixture creates a new command fixture
+// for retrieving the current branch name.
+//
+// Used in tests to simulate the behavior of the git rev-parse --abbrev-ref HEAD command.
+func NewCurrentBranchCmdFixture() command.Command {
+	return command.NewCommand(
+		"git",
+		"rev-parse",
+		"--abbrev-ref",
+		"HEAD",
+	)
+}
