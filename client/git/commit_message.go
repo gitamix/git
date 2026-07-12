@@ -36,7 +36,7 @@ func (c *Client) CommitMessage(
 		).
 		Execution(ctx)
 	if err := res.Err(); err != nil {
-		if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
+		if errs.IsContextError(err) {
 			return commit.Message{}, err
 		}
 		return commit.Message{}, errors.Join(err, errs.ErrGitFailed)
