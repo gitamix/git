@@ -1,0 +1,67 @@
+package git_test
+
+import (
+	"github.com/gitamix/types/commit"
+	"github.com/sitnikovik/osxec/command"
+)
+
+// NewCommitMessageCmdFixture creates a new command fixture
+// for retrieving the commit message by the specified commit hash.
+//
+// Returns the instance to be used
+// in tests to simulate the behavior of the git log command.
+func NewCommitMessageCmdFixture(
+	hash commit.Hash,
+) command.Command {
+	return command.NewCommand(
+		"git",
+		"log",
+		"-1",
+		"--pretty=%B",
+		hash.String(),
+	)
+}
+
+// NewCommitsCmdFixture creates a new command fixture
+// for retrieving commits by the specified commit hash.
+//
+// Used in tests to simulate the behavior of the git rev-list command.
+func NewCommitsCmdFixture(
+	hash commit.Hash,
+) command.Command {
+	return command.NewCommand(
+		"git",
+		"rev-list",
+		"--abbrev-commit",
+		hash.String()+"..HEAD",
+	)
+}
+
+// NewCurrentBranchCmdFixture creates a new command fixture
+// for retrieving the current branch name.
+//
+// Used in tests to simulate the behavior of the git rev-parse --abbrev-ref HEAD command.
+func NewCurrentBranchCmdFixture() command.Command {
+	return command.NewCommand(
+		"git",
+		"rev-parse",
+		"--abbrev-ref",
+		"HEAD",
+	)
+}
+
+// NewMergeBaseCmdFixture creates a new command fixture
+// for retrieving the merge base between two commits or branches.
+//
+// Used in tests to simulate the behavior of the git merge-base command.
+func NewMergeBaseCmdFixture(
+	target string,
+	curr string,
+) command.Command {
+	return command.NewCommand(
+		"git",
+		"merge-base",
+		target,
+		curr,
+	)
+}
