@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Integration tests run with a Docker container via testcontainers
 - Implemented `Commits()` to retrieve commits that come from the provided commit hash
 - Implemented `CurrentBranch()` to retrieve the current branch with its name
+- Implemented `MergeBase()` to retrieve the merge base commit hash between two branches or commits
 - Added `AGENTS.md` documentation for AI assistants workflow integration
 
 ### Fixed

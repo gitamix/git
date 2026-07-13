@@ -49,3 +49,19 @@ func NewCurrentBranchCmdFixture() command.Command {
 		"HEAD",
 	)
 }
+
+// NewMergeBaseCmdFixture creates a new command fixture
+// for retrieving the merge base between two commits or branches.
+//
+// Used in tests to simulate the behavior of the git merge-base command.
+func NewMergeBaseCmdFixture(
+	target string,
+	curr string,
+) command.Command {
+	return command.NewCommand(
+		"git",
+		"merge-base",
+		target,
+		curr,
+	)
+}
