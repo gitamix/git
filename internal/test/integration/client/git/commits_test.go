@@ -45,6 +45,55 @@ func TestClient_Commits(t *testing.T) {
 		assert.Len(t, got, 16)
 	})
 
+	t.Run("main first parent commit with first parent option", func(t *testing.T) {
+		t.Parallel()
+		fx := sharedContainerFixture(t)
+		ctx := context.Background()
+		got, err := impl.
+			NewClient(
+				shfx.NewShell(
+					fx.Container(),
+					RepoDir,
+				),
+			).
+			Commits(
+				ctx,
+				commit.NewHash(
+					fx.
+						Env().
+						MustGet("MAIN_FIRST_PARENT_01"),
+				),
+				impl.WithFirstParent(),
+			)
+		assert.NoError(t, err)
+		assert.Len(t, got, 9)
+	})
+
+	t.Run("main first parent commit with first parent and no merges options", func(t *testing.T) {
+		t.Parallel()
+		fx := sharedContainerFixture(t)
+		ctx := context.Background()
+		got, err := impl.
+			NewClient(
+				shfx.NewShell(
+					fx.Container(),
+					RepoDir,
+				),
+			).
+			Commits(
+				ctx,
+				commit.NewHash(
+					fx.
+						Env().
+						MustGet("MAIN_FIRST_PARENT_01"),
+				),
+				impl.WithFirstParent(),
+				impl.WithNoMerges(),
+			)
+		assert.NoError(t, err)
+		assert.Len(t, got, 8)
+	})
+
 	t.Run("not found commit", func(t *testing.T) {
 		t.Parallel()
 		fx := sharedContainerFixture(t)

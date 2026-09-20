@@ -15,12 +15,17 @@ import (
 // Commits retrieves a list of commits reachable from the current HEAD
 // that are not reachable from the specified hash (i.e. commits after `hash`, exclusive).
 //
+// The optional options configure the git rev-list execution:
+// WithFirstParent limits the result to the first-parent ancestry,
+// and WithNoMerges excludes merge commits from the result.
+//
 // Returns error if the hash is empty
 // or if the git command execution fails
 // or if the context is canceled.
 func (c *Client) Commits(
 	ctx context.Context,
 	hash commit.Hash,
+	opts ...Option,
 ) ([]commit.Commit, error) {
 	if hash.Empty() {
 		return nil, errs.ErrEmptyHash
@@ -30,9 +35,8 @@ func (c *Client) Commits(
 			c.shell,
 			command.NewCommand(
 				"git",
-				"rev-list",
-				"--abbrev-commit",
-				hash.String()+"..HEAD",
+				NewParams(opts...).
+					Args(hash)...,
 			),
 		).
 		Execution(ctx)

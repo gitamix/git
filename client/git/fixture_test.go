@@ -3,6 +3,8 @@ package git_test
 import (
 	"github.com/gitamix/types/commit"
 	"github.com/sitnikovik/osxec/command"
+
+	impl "github.com/gitamix/git/client/git"
 )
 
 // NewCommitMessageCmdFixture creates a new command fixture
@@ -23,17 +25,20 @@ func NewCommitMessageCmdFixture(
 }
 
 // NewCommitsCmdFixture creates a new command fixture
-// for retrieving commits by the specified commit hash.
+// for retrieving commits by the specified commit hash
+// with the specified git rev-list options.
 //
-// Used in tests to simulate the behavior of the git rev-list command.
+// Returns the instance to be used
+// in tests to simulate the behavior of the git rev-list command.
 func NewCommitsCmdFixture(
 	hash commit.Hash,
+	opts ...impl.Option,
 ) command.Command {
 	return command.NewCommand(
 		"git",
-		"rev-list",
-		"--abbrev-commit",
-		hash.String()+"..HEAD",
+		impl.
+			NewParams(opts...).
+			Args(hash)...,
 	)
 }
 

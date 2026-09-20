@@ -20,6 +20,7 @@ func TestClient_Commits(t *testing.T) {
 	type args struct {
 		ctx  context.Context
 		hash commit.Hash
+		opts []impl.Option
 	}
 	type want struct {
 		commits []commit.Commit
@@ -97,6 +98,214 @@ func TestClient_Commits(t *testing.T) {
 							),
 						),
 					),
+					commit.NewCommit(
+						commit.NewHash("1234567"),
+						commit.NewMessage(
+							commit.NewSubject(
+								commit.NewType("feat"),
+								commit.NewScope("domain"),
+								commit.NewDescription("add new feature"),
+							),
+							commit.NewBody(
+								[]byte(
+									"Added a new feature to the domain layer.\n\n"+
+										"This feature allows users to perform advanced operations.\n",
+								),
+							),
+						),
+					),
+				},
+				err: nil,
+			},
+		},
+		{
+			name: "ok with first parent and no merges options",
+			c: impl.NewClient(
+				shellfk.NewShell(
+					shellfk.WithResponse(
+						NewCommitsCmdFixture(
+							commit.NewHash("1234567"),
+							impl.WithFirstParent(),
+							impl.WithNoMerges(),
+						),
+						execution.NewExecution(
+							[]byte(
+								"89abcdef\n"+
+									"1234567\n",
+							),
+							nil,
+						),
+					),
+					shellfk.WithResponse(
+						NewCommitMessageCmdFixture(
+							commit.NewHash("1234567"),
+						),
+						execution.NewExecution(
+							[]byte(
+								"feat(domain): add new feature\n\n"+
+									"Added a new feature to the domain layer.\n\n"+
+									"This feature allows users to perform advanced operations.\n",
+							),
+							nil,
+						),
+					),
+					shellfk.WithResponse(
+						NewCommitMessageCmdFixture(
+							commit.NewHash("89abcdef"),
+						),
+						execution.NewExecution(
+							[]byte(
+								"fix(ui): resolve button alignment issue\n\n"+
+									"Fixed the alignment issue of the button in the UI.\n\n"+
+									"This fix ensures consistent button placement across different screen sizes.\n",
+							),
+							nil,
+						),
+					),
+				),
+			),
+			args: args{
+				ctx:  context.Background(),
+				hash: commit.NewHash("1234567"),
+				opts: []impl.Option{
+					impl.WithFirstParent(),
+					impl.WithNoMerges(),
+				},
+			},
+			want: want{
+				commits: []commit.Commit{
+					commit.NewCommit(
+						commit.NewHash("89abcdef"),
+						commit.NewMessage(
+							commit.NewSubject(
+								commit.NewType("fix"),
+								commit.NewScope("ui"),
+								commit.NewDescription("resolve button alignment issue"),
+							),
+							commit.NewBody(
+								[]byte(
+									"Fixed the alignment issue of the button in the UI.\n\n"+
+										"This fix ensures consistent button placement across different screen sizes.\n",
+								),
+							),
+						),
+					),
+					commit.NewCommit(
+						commit.NewHash("1234567"),
+						commit.NewMessage(
+							commit.NewSubject(
+								commit.NewType("feat"),
+								commit.NewScope("domain"),
+								commit.NewDescription("add new feature"),
+							),
+							commit.NewBody(
+								[]byte(
+									"Added a new feature to the domain layer.\n\n"+
+										"This feature allows users to perform advanced operations.\n",
+								),
+							),
+						),
+					),
+				},
+				err: nil,
+			},
+		},
+		{
+			name: "ok with first parent option only",
+			c: impl.NewClient(
+				shellfk.NewShell(
+					shellfk.WithResponse(
+						NewCommitsCmdFixture(
+							commit.NewHash("1234567"),
+							impl.WithFirstParent(),
+						),
+						execution.NewExecution(
+							[]byte("1234567\n"),
+							nil,
+						),
+					),
+					shellfk.WithResponse(
+						NewCommitMessageCmdFixture(
+							commit.NewHash("1234567"),
+						),
+						execution.NewExecution(
+							[]byte(
+								"feat(domain): add new feature\n\n"+
+									"Added a new feature to the domain layer.\n\n"+
+									"This feature allows users to perform advanced operations.\n",
+							),
+							nil,
+						),
+					),
+				),
+			),
+			args: args{
+				ctx:  context.Background(),
+				hash: commit.NewHash("1234567"),
+				opts: []impl.Option{
+					impl.WithFirstParent(),
+				},
+			},
+			want: want{
+				commits: []commit.Commit{
+					commit.NewCommit(
+						commit.NewHash("1234567"),
+						commit.NewMessage(
+							commit.NewSubject(
+								commit.NewType("feat"),
+								commit.NewScope("domain"),
+								commit.NewDescription("add new feature"),
+							),
+							commit.NewBody(
+								[]byte(
+									"Added a new feature to the domain layer.\n\n"+
+										"This feature allows users to perform advanced operations.\n",
+								),
+							),
+						),
+					),
+				},
+				err: nil,
+			},
+		},
+		{
+			name: "ok with no merges option only",
+			c: impl.NewClient(
+				shellfk.NewShell(
+					shellfk.WithResponse(
+						NewCommitsCmdFixture(
+							commit.NewHash("1234567"),
+							impl.WithNoMerges(),
+						),
+						execution.NewExecution(
+							[]byte("1234567\n"),
+							nil,
+						),
+					),
+					shellfk.WithResponse(
+						NewCommitMessageCmdFixture(
+							commit.NewHash("1234567"),
+						),
+						execution.NewExecution(
+							[]byte(
+								"feat(domain): add new feature\n\n"+
+									"Added a new feature to the domain layer.\n\n"+
+									"This feature allows users to perform advanced operations.\n",
+							),
+							nil,
+						),
+					),
+				),
+			),
+			args: args{
+				ctx:  context.Background(),
+				hash: commit.NewHash("1234567"),
+				opts: []impl.Option{
+					impl.WithNoMerges(),
+				},
+			},
+			want: want{
+				commits: []commit.Commit{
 					commit.NewCommit(
 						commit.NewHash("1234567"),
 						commit.NewMessage(
@@ -244,6 +453,7 @@ func TestClient_Commits(t *testing.T) {
 			got, err := tt.c.Commits(
 				tt.args.ctx,
 				tt.args.hash,
+				tt.args.opts...,
 			)
 			assert.Equal(t, tt.want.commits, got)
 			assert.ErrorIs(t, err, tt.want.err)
