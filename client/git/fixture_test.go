@@ -25,7 +25,8 @@ func NewCommitMessageCmdFixture(
 // NewCommitsCmdFixture creates a new command fixture
 // for retrieving commits by the specified commit hash.
 //
-// Used in tests to simulate the behavior of the git rev-list command.
+// Used in tests to simulate the behavior of the git rev-list command
+// that prints the commits with their parent hashes.
 func NewCommitsCmdFixture(
 	hash commit.Hash,
 ) command.Command {
@@ -33,6 +34,7 @@ func NewCommitsCmdFixture(
 		"git",
 		"rev-list",
 		"--abbrev-commit",
+		"--parents",
 		hash.String()+"..HEAD",
 	)
 }
