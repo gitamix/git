@@ -44,7 +44,7 @@ func TestClient_CommitMessage(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(
 			t,
-			commit.ParseMessage("chore: initialize fixture repository\n"),
+			commit.ParseMessage("chore: initialize fixture repository\n\n"),
 			got,
 		)
 	})

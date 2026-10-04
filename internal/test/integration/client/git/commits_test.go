@@ -42,7 +42,55 @@ func TestClient_Commits(t *testing.T) {
 				),
 			)
 		assert.NoError(t, err)
-		assert.Len(t, got, 16)
+		assert.Len(t, got, 17)
+	})
+
+	t.Run("commits kinds", func(t *testing.T) {
+		t.Parallel()
+		fx := sharedContainerFixture(t)
+		ctx := context.Background()
+		got, err := impl.
+			NewClient(
+				shfx.NewShell(
+					fx.Container(),
+					RepoDir,
+				),
+			).
+			Commits(
+				ctx,
+				commit.NewHash(
+					fx.
+						Env().
+						MustGet("MAIN_FIRST_PARENT_01"),
+				),
+			)
+		assert.NoError(t, err)
+		var merges int
+		var reverts int
+		var mergeHash string
+		var revertHash string
+		for _, c := range got {
+			if c.Kind().Merge() {
+				merges++
+				mergeHash = c.Hash().String()
+			}
+			if c.Kind().Revert() {
+				reverts++
+				revertHash = c.Hash().String()
+			}
+		}
+		assert.Equal(t, 1, merges)
+		assert.Equal(t, 1, reverts)
+		assert.Equal(
+			t,
+			fx.Env().MustGet("MAIN_FIRST_PARENT_06")[:7],
+			mergeHash,
+		)
+		assert.Equal(
+			t,
+			fx.Env().MustGet("MAIN_REVERT_01")[:7],
+			revertHash,
+		)
 	})
 
 	t.Run("not found commit", func(t *testing.T) {

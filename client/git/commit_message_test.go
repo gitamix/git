@@ -67,6 +67,11 @@ func TestClient_CommitMessage(t *testing.T) {
 								"This feature allows users to perform advanced operations.\n",
 						),
 					),
+					commit.WithRaw([]byte(
+						"feat(domain): add new feature\n\n"+
+							"Added a new feature to the domain layer.\n\n"+
+							"This feature allows users to perform advanced operations.\n",
+					)),
 				),
 				err: nil,
 			},
