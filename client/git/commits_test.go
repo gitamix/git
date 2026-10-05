@@ -41,8 +41,8 @@ func TestClient_Commits(t *testing.T) {
 						),
 						execution.NewExecution(
 							[]byte(
-								"89abcdef\n"+
-									"1234567\n",
+								"89abcdef 4567890\n"+
+									"1234567 89abcdef\n",
 							),
 							nil,
 						),
@@ -95,7 +95,13 @@ func TestClient_Commits(t *testing.T) {
 										"This fix ensures consistent button placement across different screen sizes.\n",
 								),
 							),
+							commit.WithRaw([]byte(
+								"fix(ui): resolve button alignment issue\n\n"+
+									"Fixed the alignment issue of the button in the UI.\n\n"+
+									"This fix ensures consistent button placement across different screen sizes.\n",
+							)),
 						),
+						commit.WithKind(commit.KindDefault),
 					),
 					commit.NewCommit(
 						commit.NewHash("1234567"),
@@ -111,7 +117,223 @@ func TestClient_Commits(t *testing.T) {
 										"This feature allows users to perform advanced operations.\n",
 								),
 							),
+							commit.WithRaw([]byte(
+								"feat(domain): add new feature\n\n"+
+									"Added a new feature to the domain layer.\n\n"+
+									"This feature allows users to perform advanced operations.\n",
+							)),
 						),
+						commit.WithKind(commit.KindDefault),
+					),
+				},
+				err: nil,
+			},
+		},
+		{
+			name: "ok with merge commit",
+			c: impl.NewClient(
+				shellfk.NewShell(
+					shellfk.WithResponse(
+						NewCommitsCmdFixture(
+							commit.NewHash("1234567"),
+						),
+						execution.NewExecution(
+							[]byte(
+								"89abcdef 1234567 fedcba9\n"+
+									"1234567 fedcba9\n",
+							),
+							nil,
+						),
+					),
+					shellfk.WithResponse(
+						NewCommitMessageCmdFixture(
+							commit.NewHash("89abcdef"),
+						),
+						execution.NewExecution(
+							[]byte(
+								"merge(ui): integrate 2 commits\n\n"+
+									"Merged 2 feature commits into the UI.\n",
+							),
+							nil,
+						),
+					),
+					shellfk.WithResponse(
+						NewCommitMessageCmdFixture(
+							commit.NewHash("1234567"),
+						),
+						execution.NewExecution(
+							[]byte(
+								"feat(domain): add new feature\n\n"+
+									"Added a new feature to the domain layer.\n",
+							),
+							nil,
+						),
+					),
+				),
+			),
+			args: args{
+				ctx:  context.Background(),
+				hash: commit.NewHash("1234567"),
+			},
+			want: want{
+				commits: []commit.Commit{
+					commit.NewCommit(
+						commit.NewHash("89abcdef"),
+						commit.NewMessage(
+							commit.NewSubject(
+								commit.NewType("merge"),
+								commit.NewScope("ui"),
+								commit.NewDescription("integrate 2 commits"),
+							),
+							commit.NewBody(
+								[]byte(
+									"Merged 2 feature commits into the UI.\n",
+								),
+							),
+							commit.WithRaw([]byte(
+								"merge(ui): integrate 2 commits\n\n"+
+									"Merged 2 feature commits into the UI.\n",
+							)),
+						),
+						commit.WithKind(commit.KindMerge),
+					),
+					commit.NewCommit(
+						commit.NewHash("1234567"),
+						commit.NewMessage(
+							commit.NewSubject(
+								commit.NewType("feat"),
+								commit.NewScope("domain"),
+								commit.NewDescription("add new feature"),
+							),
+							commit.NewBody(
+								[]byte(
+									"Added a new feature to the domain layer.\n",
+								),
+							),
+							commit.WithRaw([]byte(
+								"feat(domain): add new feature\n\n"+
+									"Added a new feature to the domain layer.\n",
+							)),
+						),
+						commit.WithKind(commit.KindDefault),
+					),
+				},
+				err: nil,
+			},
+		},
+		{
+			name: "ok with git revert commit",
+			c: impl.NewClient(
+				shellfk.NewShell(
+					shellfk.WithResponse(
+						NewCommitsCmdFixture(
+							commit.NewHash("1234567"),
+						),
+						execution.NewExecution(
+							[]byte(
+								"89abcdef 1234567\n",
+							),
+							nil,
+						),
+					),
+					shellfk.WithResponse(
+						NewCommitMessageCmdFixture(
+							commit.NewHash("89abcdef"),
+						),
+						execution.NewExecution(
+							[]byte(
+								"Revert \"update docs\"\n\n"+
+									"This reverts commit 1234567.\n",
+							),
+							nil,
+						),
+					),
+				),
+			),
+			args: args{
+				ctx:  context.Background(),
+				hash: commit.NewHash("1234567"),
+			},
+			want: want{
+				commits: []commit.Commit{
+					commit.NewCommit(
+						commit.NewHash("89abcdef"),
+						commit.NewMessage(
+							commit.NewSubject(
+								commit.NewType(""),
+								commit.NewScope(""),
+								commit.NewDescription("Revert \"update docs\""),
+							),
+							commit.NewBody(
+								[]byte(
+									"This reverts commit 1234567.\n",
+								),
+							),
+							commit.WithRaw([]byte(
+								"Revert \"update docs\"\n\n"+
+									"This reverts commit 1234567.\n",
+							)),
+						),
+						commit.WithKind(commit.KindRevert),
+					),
+				},
+				err: nil,
+			},
+		},
+		{
+			name: "ok with conventional revert commit",
+			c: impl.NewClient(
+				shellfk.NewShell(
+					shellfk.WithResponse(
+						NewCommitsCmdFixture(
+							commit.NewHash("1234567"),
+						),
+						execution.NewExecution(
+							[]byte(
+								"89abcdef 1234567\n",
+							),
+							nil,
+						),
+					),
+					shellfk.WithResponse(
+						NewCommitMessageCmdFixture(
+							commit.NewHash("89abcdef"),
+						),
+						execution.NewExecution(
+							[]byte(
+								"revert(ui): change button aligment\n\n"+
+									"Changed the alignment of the button in the UI back.\n",
+							),
+							nil,
+						),
+					),
+				),
+			),
+			args: args{
+				ctx:  context.Background(),
+				hash: commit.NewHash("1234567"),
+			},
+			want: want{
+				commits: []commit.Commit{
+					commit.NewCommit(
+						commit.NewHash("89abcdef"),
+						commit.NewMessage(
+							commit.NewSubject(
+								commit.NewType("revert"),
+								commit.NewScope("ui"),
+								commit.NewDescription("change button aligment"),
+							),
+							commit.NewBody(
+								[]byte(
+									"Changed the alignment of the button in the UI back.\n",
+								),
+							),
+							commit.WithRaw([]byte(
+								"revert(ui): change button aligment\n\n"+
+									"Changed the alignment of the button in the UI back.\n",
+							)),
+						),
+						commit.WithKind(commit.KindRevert),
 					),
 				},
 				err: nil,

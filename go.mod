@@ -3,7 +3,7 @@ module github.com/gitamix/git
 go 1.25.7
 
 require (
-	github.com/gitamix/types v0.1.0
+	github.com/gitamix/types v0.1.4
 	github.com/sitnikovik/osxec v0.1.0
 	github.com/stretchr/testify v1.11.1
 	github.com/testcontainers/testcontainers-go v0.43.0

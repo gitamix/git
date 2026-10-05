@@ -4,16 +4,22 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/gitamix/types/commit"
 	"github.com/sitnikovik/osxec/command"
 	"github.com/sitnikovik/osxec/process"
 
 	"github.com/gitamix/git/errs"
+	"github.com/gitamix/git/internal/commit/message"
 )
 
 // Commits retrieves a list of commits reachable from the current HEAD
 // that are not reachable from the specified hash (i.e. commits after `hash`, exclusive).
+//
+// Each provided commit carries its message
+// and the kind parsed from the message and parents:
+// a merge commit, a revert commit, or a default commit.
 //
 // Returns error if the hash is empty
 // or if the git command execution fails
@@ -32,6 +38,7 @@ func (c *Client) Commits(
 				"git",
 				"rev-list",
 				"--abbrev-commit",
+				"--parents",
 				hash.String()+"..HEAD",
 			),
 		).
@@ -45,10 +52,11 @@ func (c *Client) Commits(
 	out := res.Output()
 	commits := make([]commit.Commit, 0, out.Len())
 	for _, ln := range out.Lines() {
-		if ln == "" {
+		parents := strings.Fields(ln)
+		if len(parents) == 0 {
 			continue
 		}
-		h := commit.NewHash(ln)
+		h := commit.NewHash(parents[0])
 		msg, err := c.CommitMessage(ctx, h)
 		if err != nil {
 			return nil, fmt.Errorf(
@@ -57,7 +65,21 @@ func (c *Client) Commits(
 				err,
 			)
 		}
-		commits = append(commits, commit.NewCommit(h, msg))
+		parser := message.NewParser(msg)
+		var kind commit.Kind
+		if len(parents) > 2 {
+			kind = commit.KindMerge
+		} else if parser.IsRevert() {
+			kind = commit.KindRevert
+		}
+		commits = append(
+			commits,
+			commit.NewCommit(
+				h,
+				msg,
+				commit.WithKind(kind),
+			),
+		)
 	}
 	return commits, nil
 }

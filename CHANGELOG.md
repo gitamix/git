@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/2.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2026-10-05
+
+### Added
+
+- Parsing of the commit kind in `Commits()`: every provided commit carries its kind — `merge`, `revert`, or `default` — available via the `commit.Commit.Kind` from `types`
+- `internal/commit/message` package with a `Parser` that classifies a commit message as a revert commit by the `Revert ` subject prefix or the `revert` subject type
+
+### Changed
+
+- `Commits()` emits merge commits structurally by their parents via the `git rev-list --parents` command
+
 ## [0.1.0] - 2026-07-13
 
 ### Added
